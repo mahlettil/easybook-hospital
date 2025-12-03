@@ -1,0 +1,100 @@
+{% extends "base.html" %} {% block title %}Admin Dashboard - Easybook{% endblock
+%} {% block content %}
+<div class="section">
+  <h1 style="margin-bottom: 2rem">Admin Dashboard</h1>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Total Patients</h3>
+      <div class="stat-value">{{ total_patients }}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Total Doctors</h3>
+      <div class="stat-value">{{ total_doctors }}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Total Appointments</h3>
+      <div class="stat-value">{{ total_appointments }}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Today's Appointments</h3>
+      <div class="stat-value">{{ today_appointments }}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="card-header">Quick Actions</h2>
+    <div class="grid-3">
+      <a href="{{ url_for('main.admin_doctors') }}" class="btn btn-primary"
+        >Manage Doctors</a
+      >
+      <a href="{{ url_for('main.admin_schedules') }}" class="btn btn-primary"
+        >Manage Schedules</a
+      >
+      <a href="{{ url_for('main.admin_specialties') }}" class="btn btn-primary"
+        >Manage Specialties</a
+      >
+      <a
+        href="{{ url_for('main.admin_appointments') }}"
+        class="btn btn-secondary"
+        >View All Appointments</a
+      >
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="card-header">Recent Appointments</h2>
+    {% if recent_appointments %}
+    <div style="overflow-x: auto">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appointment in recent_appointments %}
+          <tr>
+            <td><strong>{{ appointment.reference_number }}</strong></td>
+            <td>{{ appointment.patient.full_name }}</td>
+            <td>{{ appointment.doctor.name }}</td>
+            <td>{{ appointment.appointment_date.strftime('%b %d, %Y') }}</td>
+            <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+            <td>
+              {% if appointment.status == 'scheduled' %}
+              <span class="badge badge-success">Scheduled</span>
+              {% elif appointment.status == 'completed' %}
+              <span class="badge badge-info">Completed</span>
+              {% elif appointment.status == 'cancelled' %}
+              <span class="badge badge-danger">Cancelled</span>
+              {% endif %}
+            </td>
+            <td>{{ appointment.created_at.strftime('%b %d, %Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #6b7280; padding: 2rem">
+      No appointments yet.
+    </p>
+    {% endif %}
+  </div>
+
+  <div class="card" style="background: #f0fdf4; border-left: 4px solid #10b981">
+    <h3 style="margin-bottom: 1rem">📊 System Status</h3>
+    <ul style="line-height: 1.8">
+      <li>✅ All systems operational</li>
+      <li>✅ Database connected</li>
+      <li>✅ User authentication active</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

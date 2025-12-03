@@ -1,0 +1,136 @@
+{% extends "base.html" %} {% block title %}Manage Doctors - Admin{% endblock %}
+{% block content %}
+<div class="section">
+  <h1 style="margin-bottom: 2rem">Manage Doctors</h1>
+
+  <div class="card">
+    <h2 class="card-header">Add New Doctor</h2>
+    <form method="POST" action="{{ url_for('main.admin_doctors') }}">
+      <input type="hidden" name="action" value="add" />
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="name">Doctor Name *</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="specialty_id">Specialty *</label>
+          <select
+            id="specialty_id"
+            name="specialty_id"
+            class="form-control"
+            required
+          >
+            <option value="">Select specialty</option>
+            {% for specialty in specialties %}
+            <option value="{{ specialty.id }}">{{ specialty.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="qualification">Qualification</label>
+          <input
+            type="text"
+            id="qualification"
+            name="qualification"
+            class="form-control"
+            placeholder="MD, MBBS, etc."
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="experience_years">Years of Experience</label>
+          <input
+            type="number"
+            id="experience_years"
+            name="experience_years"
+            class="form-control"
+            min="0"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone" class="form-control" />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" class="form-control" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Add Doctor</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2 class="card-header">All Doctors</h2>
+    {% if doctors %}
+    <div style="overflow-x: auto">
+      <table class="table" id="doctorsTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Specialty</th>
+            <th>Qualification</th>
+            <th>Experience</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for doctor in doctors %}
+          <tr>
+            <td><strong>{{ doctor.name }}</strong></td>
+            <td>{{ doctor.specialty.name }}</td>
+            <td>{{ doctor.qualification or 'N/A' }}</td>
+            <td>{{ doctor.experience_years or 'N/A' }} years</td>
+            <td>{{ doctor.phone or 'N/A' }}</td>
+            <td>
+              {% if doctor.is_active %}
+              <span class="badge badge-success">Active</span>
+              {% else %}
+              <span class="badge badge-danger">Inactive</span>
+              {% endif %}
+            </td>
+            <td>
+              <form
+                method="POST"
+                action="{{ url_for('main.admin_doctors') }}"
+                style="display: inline"
+              >
+                <input type="hidden" name="action" value="delete" />
+                <input type="hidden" name="doctor_id" value="{{ doctor.id }}" />
+                <button
+                  type="submit"
+                  class="btn btn-danger"
+                  style="padding: 0.5rem 1rem"
+                  onclick="return confirm('Deactivate this doctor?')"
+                >
+                  Deactivate
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #6b7280; padding: 2rem">
+      No doctors added yet.
+    </p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

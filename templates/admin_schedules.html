@@ -1,0 +1,136 @@
+{% extends "base.html" %} {% block title %}Manage Schedules - Admin{% endblock
+%} {% block content %}
+<div class="section">
+  <h1 style="margin-bottom: 2rem">Manage Doctor Schedules</h1>
+
+  <div class="card">
+    <h2 class="card-header">Add New Schedule</h2>
+    <form method="POST" action="{{ url_for('main.admin_schedules') }}">
+      <input type="hidden" name="action" value="add" />
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="doctor_id">Doctor *</label>
+          <select id="doctor_id" name="doctor_id" class="form-control" required>
+            <option value="">Select doctor</option>
+            {% for doctor in doctors %}
+            <option value="{{ doctor.id }}">
+              {{ doctor.name }} - {{ doctor.specialty.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="day_of_week">Day of Week *</label>
+          <select
+            id="day_of_week"
+            name="day_of_week"
+            class="form-control"
+            required
+          >
+            <option value="">Select day</option>
+            {% for day in days %}
+            <option value="{{ day }}">{{ day }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="start_time">Start Time *</label>
+          <input
+            type="time"
+            id="start_time"
+            name="start_time"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="end_time">End Time *</label>
+          <input
+            type="time"
+            id="end_time"
+            name="end_time"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="slot_duration">Slot Duration (minutes)</label>
+          <input
+            type="number"
+            id="slot_duration"
+            name="slot_duration"
+            class="form-control"
+            value="30"
+            min="15"
+            step="15"
+          />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Add Schedule</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2 class="card-header">All Schedules</h2>
+    {% if schedules %}
+    <div style="overflow-x: auto">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Doctor</th>
+            <th>Specialty</th>
+            <th>Day</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Slot Duration</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for schedule in schedules %}
+          <tr>
+            <td><strong>{{ schedule.doctor.name }}</strong></td>
+            <td>{{ schedule.doctor.specialty.name }}</td>
+            <td>{{ schedule.day_of_week }}</td>
+            <td>{{ schedule.start_time.strftime('%I:%M %p') }}</td>
+            <td>{{ schedule.end_time.strftime('%I:%M %p') }}</td>
+            <td>{{ schedule.slot_duration }} min</td>
+            <td>
+              {% if schedule.is_active %}
+              <span class="badge badge-success">Active</span>
+              {% else %}
+              <span class="badge badge-danger">Inactive</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #6b7280; padding: 2rem">
+      No schedules added yet.
+    </p>
+    {% endif %}
+  </div>
+
+  <div class="card" style="background: #fef3c7; border-left: 4px solid #f59e0b">
+    <h3 style="margin-bottom: 1rem">💡 Schedule Tips</h3>
+    <ul style="line-height: 1.8">
+      <li>
+        Set slot duration based on typical appointment length (usually 30
+        minutes)
+      </li>
+      <li>Consider lunch breaks and other non-working hours</li>
+      <li>You can create multiple schedules per doctor per day</li>
+      <li>Patients can only book within active schedules</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

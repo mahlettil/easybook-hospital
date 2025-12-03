@@ -1,0 +1,138 @@
+{% extends "base.html" %} {% block title %}Patient Dashboard - Easybook{%
+endblock %} {% block content %}
+<div class="section">
+  <h1 style="margin-bottom: 2rem">Welcome, {{ patient.full_name }}</h1>
+
+  <div class="grid-2" style="margin-bottom: 2rem">
+    <div class="card">
+      <h3 style="margin-bottom: 1rem">Quick Actions</h3>
+      <a
+        href="{{ url_for('main.book_appointment') }}"
+        class="btn btn-primary"
+        style="width: 100%; margin-bottom: 1rem"
+      >
+        📅 Book New Appointment
+      </a>
+      <a
+        href="{{ url_for('main.patient_profile') }}"
+        class="btn btn-outline"
+        style="width: 100%"
+      >
+        👤 Update Profile
+      </a>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: 1rem">Patient Information</h3>
+      <p><strong>Phone:</strong> {{ patient.phone }}</p>
+      <p><strong>Email:</strong> {{ patient.email or 'Not provided' }}</p>
+      <p><strong>Gender:</strong> {{ patient.gender or 'Not specified' }}</p>
+      {% if patient.date_of_birth %}
+      <p>
+        <strong>Date of Birth:</strong> {{ patient.date_of_birth.strftime('%B
+        %d, %Y') }}
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="card-header">Upcoming Appointments</h2>
+    {% if upcoming_appointments %}
+    <div style="overflow-x: auto">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Doctor</th>
+            <th>Specialty</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appointment in upcoming_appointments %}
+          <tr>
+            <td><strong>{{ appointment.reference_number }}</strong></td>
+            <td>{{ appointment.doctor.name }}</td>
+            <td>{{ appointment.doctor.specialty.name }}</td>
+            <td>{{ appointment.appointment_date.strftime('%B %d, %Y') }}</td>
+            <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+            <td>
+              <span class="badge badge-success">{{ appointment.status }}</span>
+            </td>
+            <td>
+              <form
+                method="POST"
+                action="{{ url_for('main.cancel_appointment', appointment_id=appointment.id) }}"
+                style="display: inline"
+              >
+                <button
+                  type="submit"
+                  class="btn btn-danger"
+                  style="padding: 0.5rem 1rem"
+                >
+                  Cancel
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #6b7280; padding: 2rem">
+      No upcoming appointments.
+      <a href="{{ url_for('main.book_appointment') }}" style="color: #2563eb"
+        >Book one now</a
+      >
+    </p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2 class="card-header">Appointment History</h2>
+    {% if past_appointments %}
+    <div style="overflow-x: auto">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appointment in past_appointments %}
+          <tr>
+            <td>{{ appointment.reference_number }}</td>
+            <td>{{ appointment.doctor.name }}</td>
+            <td>{{ appointment.appointment_date.strftime('%B %d, %Y') }}</td>
+            <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+            <td>
+              {% if appointment.status == 'completed' %}
+              <span class="badge badge-success">Completed</span>
+              {% elif appointment.status == 'cancelled' %}
+              <span class="badge badge-danger">Cancelled</span>
+              {% else %}
+              <span class="badge badge-info">{{ appointment.status }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #6b7280; padding: 2rem">
+      No past appointments.
+    </p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

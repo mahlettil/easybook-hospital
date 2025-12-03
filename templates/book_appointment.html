@@ -1,0 +1,105 @@
+{% extends "base.html" %} {% block title %}Book Appointment - Easybook{%
+endblock %} {% block content %}
+<div class="section">
+  <div style="max-width: 700px; margin: 0 auto">
+    <div class="card">
+      <h2 class="card-header">Book New Appointment</h2>
+
+      <form method="POST" action="{{ url_for('main.book_appointment') }}">
+        <div class="form-group">
+          <label for="specialty">Select Specialty *</label>
+          <select id="specialty" name="specialty" class="form-control" required>
+            <option value="">Choose a specialty</option>
+            {% for specialty in specialties %}
+            <option value="{{ specialty.id }}">{{ specialty.name }}</option>
+            {% endfor %}
+          </select>
+          <small style="color: #6b7280"
+            >Select the medical specialty you need</small
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="doctor_id">Select Doctor *</label>
+          <select
+            id="doctor_id"
+            name="doctor_id"
+            class="form-control"
+            required
+            disabled
+          >
+            <option value="">First select a specialty</option>
+          </select>
+          <small style="color: #6b7280">Choose your preferred doctor</small>
+        </div>
+
+        <div class="form-group">
+          <label for="appointment_date">Appointment Date *</label>
+          <input
+            type="date"
+            id="appointment_date"
+            name="appointment_date"
+            class="form-control"
+            required
+          />
+          <small style="color: #6b7280"
+            >Select a date for your appointment</small
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="appointment_time">Appointment Time *</label>
+          <select
+            id="appointment_time"
+            name="appointment_time"
+            class="form-control"
+            required
+            disabled
+          >
+            <option value="">First select doctor and date</option>
+          </select>
+          <small style="color: #6b7280"
+            >Available time slots will appear here</small
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Additional Notes (Optional)</label>
+          <textarea
+            id="notes"
+            name="notes"
+            class="form-control"
+            rows="4"
+            placeholder="Any specific concerns or reasons for visit..."
+          ></textarea>
+        </div>
+
+        <div style="display: flex; gap: 1rem">
+          <button type="submit" class="btn btn-primary" style="flex: 1">
+            Book Appointment
+          </button>
+          <a
+            href="{{ url_for('main.patient_dashboard') }}"
+            class="btn btn-outline"
+            style="flex: 1"
+            >Cancel</a
+          >
+        </div>
+      </form>
+    </div>
+
+    <div
+      class="card"
+      style="background: #f0f9ff; border-left: 4px solid #2563eb"
+    >
+      <h3 style="margin-bottom: 1rem">📌 Important Information</h3>
+      <ul style="margin-left: 1.5rem; line-height: 1.8">
+        <li>Please arrive 15 minutes before your appointment time</li>
+        <li>Bring your ID and any relevant medical documents</li>
+        <li>You can cancel appointments up to 24 hours in advance</li>
+        <li>You will receive a reference number after booking</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
