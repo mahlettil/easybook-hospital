@@ -23,7 +23,7 @@ class Config:
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Get DATABASE_URL from environment
-    _database_url = os.environ.get('DATABASE_URL')
+    _database_url = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL') or os.environ.get('POSTGRES_URL_NON_POOLING')
 
 # Fix for Heroku/some platforms that use 'postgres://' instead of 'postgresql://'
     if _database_url and _database_url.startswith('postgres://'):
